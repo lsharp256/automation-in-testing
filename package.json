@@ -1,0 +1,22 @@
+{
+  "name": "automation-in-testing",
+  "version": "1.0.0",
+  "description": "UI tests for https://automationintesting.online",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsharp256/automation-in-testing.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lsharp256/automation-in-testing/issues"
+  },
+  "homepage": "https://github.com/lsharp256/automation-in-testing#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.4"
+  }
+}
