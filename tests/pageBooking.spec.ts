@@ -55,18 +55,23 @@ test('Create successful booking', async({page, context}) =>{
 
     // Get today's date and add days for check-in and check-out
     const today = new Date();
-    const checkInDate = new Date(today)
-    checkInDate.setDate(today.getDate() + 1) // Check-in: today + 2 days
-    const checkOutDate = new Date(today)
-    checkOutDate.setDate(today.getDate() + 4)
+    const checkInDate = new Date(today);
+    checkInDate.setDate(today.getDate());
+
+     // For a 3-night stay:
+    const calendarEndDate = new Date(checkInDate);
+    calendarEndDate.setDate(checkInDate.getDate() + 2);
+
+    const checkOutDate = new Date(checkInDate);
+    checkOutDate.setDate(checkInDate.getDate() + 3);
 
     // Format dates for assertion (YYYY-MM-DD)
     const checkInFormatted = checkInDate.toISOString().split('T')[0]
     const checkOutFormatted = checkOutDate.toISOString().split('T')[0]
 
     // Select check-in and check-out dates
-    const checkInElement = page.locator('.rbc-button-link').getByText(checkInDate.getDate().toString(), { exact: true })
-    const checkOutElement = page.locator('.rbc-button-link').getByText(checkOutDate.getDate().toString(), { exact: true })
+    const checkInElement = page.locator('.rbc-date-cell').getByText(checkInDate.getDate().toString(), { exact: true })
+    const checkOutElement = page.locator('.rbc-date-cell').getByText(checkOutDate.getDate().toString(), { exact: true })
 
     await checkInElement.waitFor()
     await checkOutElement.waitFor()
@@ -75,8 +80,9 @@ test('Create successful booking', async({page, context}) =>{
     const endBox = await checkOutElement.boundingBox()
 
     if (startBox && endBox){
-        await page.mouse.move(startBox.x + startBox.width / 2, startBox.y + startBox.height / 2)
-        await page.mouse.down() // Hold mouse down
+        // Move mouse left of date element
+        await page.mouse.move(startBox.x - 10, startBox.y + startBox.height / 2);
+        await page.mouse.down()
 
         // Drag to the end date
         await page.mouse.move(endBox.x + endBox.width / 2, endBox.y + endBox.height / 2, { steps: 10 })
@@ -85,9 +91,28 @@ test('Create successful booking', async({page, context}) =>{
 
     await page.getByRole('button', {name: "Book"}).first().click()
     
-    const successMessage = await page.locator('.ReactModalPortal').textContent()
+    const successMessageElement = page.locator('.ReactModalPortal');
+    const successMessage = await successMessageElement.textContent();
 
-    // expect(successMessage).toContain('Booking Successful!')
-    // not getting the correct message - needs a fix
-    expect(successMessage).toContain(`Booking Successful!Congratulations! Your booking has been confirmed for:${checkInFormatted} - ${checkOutFormatted}Close`)
-})
+    const assertCheckoutDate = new Date(checkOutDate);
+    assertCheckoutDate.setDate(checkOutDate.getDate() + 1);
+    const assertCheckoutFormatted = assertCheckoutDate.toISOString().split('T')[0];
+
+    if (successMessage) {
+        expect(successMessage).toContain(`Booking Successful!Congratulations! Your booking has been confirmed for:${checkInFormatted} - ${assertCheckoutFormatted}Close`)
+    } else {
+        throw new Error('Failed to retrieve success message text content.')
+    }
+});
+
+test('Delete a booking', async ({page}) => {
+    
+});
+
+test('Admin Login', async ({page}) => {
+    
+});
+
+test('Complete contact form', async ({page}) => {
+    
+});

@@ -20,3 +20,5 @@ UI tests for https://automationintesting.online
 
 ### Show test report
 ```npx playwright show-report```
+
+To view a video replay of the tests navigate to /test-results/ in the main directory.
